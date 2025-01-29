@@ -1,0 +1,77 @@
+# **🔹 .NET Build Files**
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.pdb
+*.app/
+*.ipa
+*.dmg
+*.log
+*.vs
+*.vscode
+*.user
+*.dbmdl
+*.bak
+*.orig
+
+# **🔹 Environment Variables (SECURITY)**
+.env
+secrets.json
+
+# **🔹 Logs & Debugging**
+logs/
+*.log
+!log/.gitkeep
+testResults/
+*.trx
+*.coverage
+coverage/
+
+# **🔹 Docker Files**
+docker-compose.override.yml
+docker-compose*.yml
+Dockerfile
+*.tar
+
+# **🔹 Entity Framework Migrations**
+Migrations/
+
+# **🔹 Visual Studio & Rider**
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.cache
+*.sln.ide
+*.sln.docstates
+*.ncrunchproject
+*.dotSettings*
+
+# **🔹 NuGet Packages & Cache**
+*.nupkg
+packages/
+.nuget/
+project.lock.json
+project.assets.json
+
+# **🔹 Node & Frontend Files (if using React, Vue, etc.)**
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+.vite/
+dist/
+
+# **🔹 Temporary Files**
+*.tmp
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+
+# **🔹 Resharper Files**
+_ReSharper.CasaDanaAPI/
+.idea
