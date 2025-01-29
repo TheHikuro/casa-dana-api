@@ -1,4 +1,4 @@
-namespace CasaDanaAPI.Models
+namespace CasaDanaAPI.Models.Reservations
 {
     public enum ReservationStatus
     {

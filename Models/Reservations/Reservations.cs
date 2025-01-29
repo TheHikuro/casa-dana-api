@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CasaDanaAPI.Models
+namespace CasaDanaAPI.Models.Reservations
 {
     public class Reservation
     {

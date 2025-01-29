@@ -31,7 +31,6 @@ coverage/
 
 # **🔹 Docker Files**
 docker-compose.override.yml
-docker-compose*.yml
 Dockerfile
 *.tar
 

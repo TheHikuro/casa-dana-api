@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CasaDanaAPI.Models
+namespace CasaDanaAPI.Models.Users
 {
     public class User
     {
