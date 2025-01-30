@@ -34,9 +34,6 @@ docker-compose.override.yml
 Dockerfile
 *.tar
 
-# **🔹 Entity Framework Migrations**
-Migrations/
-
 # **🔹 Visual Studio & Rider**
 .vs/
 .idea/
