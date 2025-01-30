@@ -9,6 +9,8 @@ namespace CasaDanaAPI.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
+        public ApplicationDbContext() { }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Calendar> Calendars { get; set; }
         public DbSet<Reservation> Reservations { get; set; }

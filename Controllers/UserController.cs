@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using CasaDanaAPI.DTO.Users;
+using CasaDanaAPI.DTOs.Users;
 using CasaDanaAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CasaDanaAPI.Controllers
 {
-    [Route("api/users")]
     [ApiController]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -15,25 +16,44 @@ namespace CasaDanaAPI.Controllers
             _userService = userService;
         }
 
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(CreateUserDto userDto)
+        {
+            var user = await _userService.CreateUserAsync(userDto);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginUserDto loginDto)
+        {
+            var token = await _userService.LoginAsync(loginDto);
+            if (token == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new { Token = token });
+        }
+        
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             return Ok(user);
         }
-
+        
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllUsers()
         {
-            return Ok(await _userService.GetAllUsersAsync());
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userDto)
-        {
-            var newUser = await _userService.CreateUserAsync(userDto);
-            return CreatedAtAction(nameof(GetUserById), new { id = newUser.Id }, newUser);
+            var users = await _userService.GetAllUsersAsync();
+            return Ok(users);
         }
     }
 }
