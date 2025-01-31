@@ -8,15 +8,38 @@ namespace CasaDanaAPI.Models.Reservations
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
-        public int NumberOfPersons { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
-        public decimal Price { get; set; }
-        public string Phone { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        
+        [Required]
+        [MaxLength(50)]
+        public required int NumberOfPersons { get; set; }
+        
+        [Required]
+        public required DateTime Start { get; set; }
+        
+        [Required]
+        public required DateTime End { get; set; }
+        
+        [Required]
+        [MaxLength(50)]
+        public required decimal Price { get; set; }
+        
+        [Required]
+        [MaxLength(50)]
+        public required string Phone { get; set; } 
+        
+        [Required]
+        [MaxLength(255)]
+        public required string Email { get; set; } 
+        
+        [Required]
+        [MaxLength(50)]
+        public required string FirstName { get; set; } 
+        
+        [Required]
+        [MaxLength(50)]
+        public required string LastName { get; set; }
+
+        [MaxLength(255)] public string? Description { get; set; } = String.Empty; 
         
         [Column(TypeName = "varchar(20)")]
         public ReservationStatus Status { get; set; } = ReservationStatus.Pending; 
