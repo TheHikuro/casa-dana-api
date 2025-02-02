@@ -30,11 +30,11 @@ namespace CasaDanaAPI.Extensions
 
         private static string BuildConnectionStringFromEnv()
         {
-            return $"Host={Env.GetString("DATABASE_HOST", Environment.GetEnvironmentVariable("DATABASE_HOST"))};" +
-                   $"Port={Env.GetString("DATABASE_PORT", Environment.GetEnvironmentVariable("DATABASE_PORT"))};" +
-                   $"Database={Env.GetString("DATABASE_NAME", Environment.GetEnvironmentVariable("DATABASE_NAME"))};" +
-                   $"Username={Env.GetString("DATABASE_USER", Environment.GetEnvironmentVariable("DATABASE_USER"))};" +
-                   $"Password={Env.GetString("DATABASE_PASSWORD", Environment.GetEnvironmentVariable("DATABASE_PASSWORD"))};";
+            return $"Host={Env.GetString("PGHOST", Environment.GetEnvironmentVariable("PGHOST"))};" +
+                   $"Port={Env.GetString("PGPORT", Environment.GetEnvironmentVariable("PGPORT"))};" +
+                   $"Database={Env.GetString("PGDATABASE", Environment.GetEnvironmentVariable("PGDATABASE"))};" +
+                   $"Username={Env.GetString("PGUSER", Environment.GetEnvironmentVariable("PGUSER"))};" +
+                   $"Password={Env.GetString("PGPASSWORD", Environment.GetEnvironmentVariable("DATABASE_PASSWORD"))};";
         }
     }
 }

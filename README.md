@@ -44,11 +44,11 @@ cd casa-dana-api
 ### **3️⃣ Set Up Environment Variables**
 Create a **`.env`** file in the root directory:
 ```
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_NAME=ASK_FOR_IT
-DATABASE_USER=ASK_FOR_IT
-DATABASE_PASSWORD=ASK_FOR_IT
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=ASK_FOR_IT
+PGUSER=ASK_FOR_IT
+PGPASSWORD=ASK_FOR_IT
 ```
 
 ### **4️⃣ Run PostgreSQL with Docker**
