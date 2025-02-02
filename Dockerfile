@@ -1,18 +1,21 @@
-# Use the official .NET 9 SDK image to build the project
+# Stage 1: Build the .NET app
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-
 WORKDIR /app
 
 # Copy everything and restore dependencies
-COPY . . 
+COPY casa-dana-api.csproj ./
 RUN dotnet restore
 
-# Build and publish the project
-RUN dotnet publish -c Release -o /publish
+# Copy remaining files and build the app
+COPY . . 
+RUN dotnet publish -c Release -o /app/publish
 
-# Use the runtime image to run the app
+# Stage 2: Run the app using the .NET 9 runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 
-COPY --from=build /publish .
-CMD ["dotnet", "CasaDanaAPI.dll"]
+# Copy built app from previous stage
+COPY --from=build /app/publish .
+
+# Set the entrypoint to run the application
+CMD ["dotnet", "casa-dana-api.dll"]
