@@ -24,6 +24,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+app.MigrateDatabase();
 
 app.UseSwaggerWithUi(Env.GetString("ASPNETCORE_ENVIRONMENT"));
 app.UseAuthentication();
