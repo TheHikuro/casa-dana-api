@@ -47,24 +47,29 @@ namespace CasaDanaAPI.Extensions
             return services;
         }
 
-        public static void UseSwaggerWithUi(this IApplicationBuilder app)
+        public static void UseSwaggerWithUi(this IApplicationBuilder app, string env)
         {
-            app.UseSwagger(c =>
-            {
-                c.RouteTemplate = "swagger/{documentName}/swagger.{format}";
-            });
+           if (env == "Development")
+           {
+                app.UseSwagger(c =>
+                {
+                    c.RouteTemplate = "swagger/{documentName}/swagger.{format}";
+                });
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CasaDana API v1");
-                c.RoutePrefix = "swagger";
-            });
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CasaDana API v1");
+                    c.RoutePrefix = "swagger";
+                });
 
-            Task.Run(async () =>
-            {
-                await Task.Delay(5000);
-                await SaveOpenApiSpec();
-            });
+               
+                Task.Run(async () =>
+                {
+                    await Task.Delay(5000);
+                    await SaveOpenApiSpec();
+                });
+
+           }
         }
 
         private static async Task SaveOpenApiSpec()

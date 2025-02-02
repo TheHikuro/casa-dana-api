@@ -4,6 +4,7 @@ using CasaDanaAPI.Services.Interfaces;
 using CasaDanaAPI.Repositories;
 using CasaDanaAPI.Repositories.Interfaces;
 using CasaDanaAPI.Extensions;
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-app.UseSwaggerWithUi();
+app.UseSwaggerWithUi(Env.GetString("ASPNETCORE_ENVIRONMENT"));
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
