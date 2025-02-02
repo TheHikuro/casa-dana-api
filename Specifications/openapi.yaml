@@ -403,13 +403,6 @@
         "additionalProperties": false
       },
       "ReservationDto": {
-        "required": [
-          "description",
-          "email",
-          "firstName",
-          "lastName",
-          "phone"
-        ],
         "type": "object",
         "properties": {
           "id": {
@@ -466,8 +459,7 @@
         "enum": [
           0,
           1,
-          2,
-          3
+          2
         ],
         "type": "integer",
         "format": "int32"
