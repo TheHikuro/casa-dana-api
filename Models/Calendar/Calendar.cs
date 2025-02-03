@@ -8,11 +8,12 @@ namespace CasaDanaAPI.Models.Calendar
         public Guid Id { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
+        public required DateTime StartDate { get; set; } = DateTime.UtcNow;
 
         [Required]
-        public DateTime EndDate { get; set; }
+        public required DateTime EndDate { get; set; } = DateTime.UtcNow.AddDays(1);
 
-        public int Price { get; set; } = 88;
+        [Required]
+        public required int Price { get; set; } = 88;
     }
 }

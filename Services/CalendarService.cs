@@ -26,10 +26,10 @@ using CasaDanaAPI.DTOs.Calendars;
                     return overlapping.First().Price;
                 }
         
-                public async Task<IEnumerable<CalendarDto>> GetAllCalendarEntriesAsync()
+                public async Task<IEnumerable<Calendar>> GetAllCalendarEntriesAsync()
                 {
                     var entities = await _calendarRepo.GetAllAsync();
-                    return entities.Select(e => new CalendarDto
+                    return entities.Select(e => new Calendar
                     {
                         Id = e.Id,
                         StartDate = e.StartDate,
@@ -38,12 +38,12 @@ using CasaDanaAPI.DTOs.Calendars;
                     });
                 }
         
-                public async Task<CalendarDto> GetCalendarEntryByIdAsync(Guid id)
+                public async Task<Calendar> GetCalendarEntryByIdAsync(Guid id)
                 {
                     var entity = await _calendarRepo.GetByIdAsync(id);
                     if (entity is null) return null;
         
-                    return new CalendarDto
+                    return new Calendar
                     {
                         Id = entity.Id,
                         StartDate = entity.StartDate,
@@ -52,7 +52,7 @@ using CasaDanaAPI.DTOs.Calendars;
                     };
                 }
         
-                public async Task<CalendarDto> CreateCalendarEntryAsync(CalendarDto entryDto)
+                public async Task<Calendar> CreateCalendarEntryAsync(Calendar entryDto)
                 {
                     var entity = new Calendar
                     {
@@ -63,7 +63,7 @@ using CasaDanaAPI.DTOs.Calendars;
         
                     var created = await _calendarRepo.CreateAsync(entity);
         
-                    return new CalendarDto
+                    return new Calendar
                     {
                         Id = created.Id,
                         StartDate = created.StartDate,
@@ -72,7 +72,7 @@ using CasaDanaAPI.DTOs.Calendars;
                     };
                 }
         
-                public async Task UpdateCalendarEntryAsync(Guid id, CalendarDto entryDto)
+                public async Task UpdateCalendarEntryAsync(Guid id, Calendar entryDto)
                 {
                     var existing = await _calendarRepo.GetByIdAsync(id);
                     if (existing == null)

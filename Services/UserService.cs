@@ -5,30 +5,22 @@ using CasaDanaAPI.DTOs.Users;
             
             namespace CasaDanaAPI.Services
             {
-                public class UserService : IUserService
+                public class UserService(IUserRepository userRepository, TokenService tokenService) : IUserService
                 {
-                    private readonly IUserRepository _userRepository;
-                    private readonly TokenService _tokenService;
-            
-                    public UserService(IUserRepository userRepository, TokenService tokenService)
-                    {
-                        _userRepository = userRepository;
-                        _tokenService = tokenService;
-                    }
-            
-                    private string HashPassword(string password)
+                    
+                    private static string HashPassword(string password)
                     {
                         return BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt(12));
                     }
             
-                    private bool VerifyPassword(string password, string hashedPassword)
+                    private static bool VerifyPassword(string password, string hashedPassword)
                     {
                         return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
                     }
             
                     public async Task<UserResponseDto> GetUserByIdAsync(Guid id)
                     {
-                        var user = await _userRepository.GetByIdAsync(id);
+                        var user = await userRepository.GetByIdAsync(id);
                         if (user == null) return null;
             
                         return new UserResponseDto
@@ -42,7 +34,7 @@ using CasaDanaAPI.DTOs.Users;
             
                     public async Task<List<UserResponseDto>> GetAllUsersAsync()
                     {
-                        var users = await _userRepository.GetAllAsync();
+                        var users = await userRepository.GetAllAsync();
                         return users.Select(u => new UserResponseDto
                         {
                             Id = u.Id,
@@ -64,7 +56,7 @@ using CasaDanaAPI.DTOs.Users;
                             PasswordHash = hashedPassword
                         };
             
-                        var newUser = await _userRepository.AddAsync(user);
+                        var newUser = await userRepository.AddAsync(user);
                         return new UserResponseDto
                         {
                             Id = newUser.Id,
@@ -76,10 +68,10 @@ using CasaDanaAPI.DTOs.Users;
             
                     public async Task<string?> LoginAsync(LoginUserDto loginDto)
                     {
-                        var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
+                        var user = await userRepository.GetUserByEmailAsync(loginDto.Email);
                         if (user == null || !VerifyPassword(loginDto.Password, user.PasswordHash)) return null;
 
-                        var token = _tokenService.GenerateToken(user);
+                        var token = tokenService.GenerateToken(user);
                         return token;
                     }
                 }

@@ -5,46 +5,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CasaDanaAPI.Services;
 
-public class ReservationService : IReservationService
+public class ReservationService(ApplicationDbContext context) : IReservationService
 {
-    private readonly ApplicationDbContext _context;
-
-    public ReservationService(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<Reservation?> GetReservationByIdAsync(Guid id)
     {
-        return await _context.Reservations.FindAsync(id);
+        return await context.Reservations.FindAsync(id);
     }
 
     public async Task<List<Reservation>> GetAllReservationsAsync()
     {
-        return await _context.Reservations.ToListAsync();
+        return await context.Reservations.ToListAsync();
     }
 
     public async Task<Reservation> CreateReservationAsync(Reservation reservation)
     {
-        _context.Reservations.Add(reservation);
-        await _context.SaveChangesAsync();
+        context.Reservations.Add(reservation);
+        await context.SaveChangesAsync();
         return reservation;
     }
 
     public async Task<Reservation> UpdateReservationAsync(Reservation reservation)
     {
-        _context.Reservations.Update(reservation);
-        await _context.SaveChangesAsync();
+        context.Reservations.Update(reservation);
+        await context.SaveChangesAsync();
         return reservation;
     }
 
     public async Task<bool> DeleteReservationAsync(Guid id)
     {
-        var reservation = await _context.Reservations.FindAsync(id);
+        var reservation = await context.Reservations.FindAsync(id);
         if (reservation == null) return false;
 
-        _context.Reservations.Remove(reservation);
-        await _context.SaveChangesAsync();
+        context.Reservations.Remove(reservation);
+        await context.SaveChangesAsync();
         return true;
     }
 }

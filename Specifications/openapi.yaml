@@ -528,6 +528,11 @@
   "components": {
     "schemas": {
       "CalendarDto": {
+        "required": [
+          "endDate",
+          "price",
+          "startDate"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -596,6 +601,15 @@
         "additionalProperties": false
       },
       "ReservationDto": {
+        "required": [
+          "email",
+          "end",
+          "firstName",
+          "lastName",
+          "numberOfPersons",
+          "phone",
+          "start"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -619,20 +633,20 @@
             "format": "double"
           },
           "phone": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "email": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "firstName": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "lastName": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "description": {
             "type": "string",

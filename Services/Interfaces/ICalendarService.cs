@@ -1,4 +1,4 @@
-using CasaDanaAPI.DTOs.Calendars;
+using CasaDanaAPI.Models.Calendar;
 
 namespace CasaDanaAPI.Services.Interfaces
 {
@@ -6,10 +6,10 @@ namespace CasaDanaAPI.Services.Interfaces
     {
         Task<int> GetPriceForDateAsync(DateTime date);
         
-        Task<IEnumerable<CalendarDto>> GetAllCalendarEntriesAsync();
-        Task<CalendarDto> GetCalendarEntryByIdAsync(Guid id);
-        Task<CalendarDto> CreateCalendarEntryAsync(CalendarDto entryDto);
-        Task UpdateCalendarEntryAsync(Guid id, CalendarDto entryDto);
+        Task<IEnumerable<Calendar>> GetAllCalendarEntriesAsync();
+        Task<Calendar> GetCalendarEntryByIdAsync(Guid id);
+        Task<Calendar> CreateCalendarEntryAsync(Calendar entry);
+        Task UpdateCalendarEntryAsync(Guid id, Calendar entry);
         Task DeleteCalendarEntryAsync(Guid id);
     }
 }

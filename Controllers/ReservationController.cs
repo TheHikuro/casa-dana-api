@@ -1,72 +1,65 @@
+using AutoMapper;
 using CasaDanaAPI.DTOs.Reservations;
 using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using CasaDanaAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace CasaDanaAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReservationsController : ControllerBase
+public class ReservationsController(IReservationService reservationService, IMapper mapper) : ControllerBase
 {
-    private readonly IReservationService _reservationService;
-
-    public ReservationsController(IReservationService reservationService)
-    {
-        _reservationService = reservationService;
-    }
-
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ReservationDto>>> GetReservations()
     {
-        var reservations = await _reservationService.GetAllReservationsAsync();
-        return Ok(reservations.Select(r => r.MapTo<ReservationDto>()));
+        var reservations = await reservationService.GetAllReservationsAsync();
+        return Ok(reservations.Select(r => mapper.Map<ReservationDto>(r)));
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ReservationDto>> GetReservation(Guid id)
     {
-        var reservation = await _reservationService.GetReservationByIdAsync(id);
+        var reservation = await reservationService.GetReservationByIdAsync(id);
         if (reservation == null) return NotFound();
 
-        return Ok(reservation.MapTo<ReservationDto>());
+        return Ok(mapper.Map<ReservationDto>(reservation));
     }
 
     [HttpPost]
-    public async Task<ActionResult<ReservationDto>> CreateReservation([FromBody] ReservationDto createReservationDto)
+    public async Task<ActionResult<ReservationDto>> CreateReservation([FromBody] ReservationDto body)
     {
-        if (createReservationDto is null) return BadRequest();
+        if (body is null) return BadRequest();
 
-        var reservation = createReservationDto.MapTo<Reservation>();
+        var reservation = mapper.Map<Reservation>(body);
 
-        var createdReservation = await _reservationService.CreateReservationAsync(reservation);
+        var createdReservation = await reservationService.CreateReservationAsync(reservation);
 
-        return CreatedAtAction(nameof(GetReservation), new { id = createdReservation.Id }, createdReservation.MapTo<ReservationDto>());
+        return CreatedAtAction(nameof(GetReservation), new { id = createdReservation.Id }, mapper.Map<ReservationDto>(createdReservation));
     }
 
     [Authorize]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<ReservationDto>> UpdateReservation(Guid id, ReservationDto updateReservationDto)
     {
-        var reservation = await _reservationService.GetReservationByIdAsync(id);
+        var reservation = await reservationService.GetReservationByIdAsync(id);
         if (reservation == null) return NotFound();
 
-        updateReservationDto.MapTo(reservation);
-        var updatedReservation = await _reservationService.UpdateReservationAsync(reservation);
+        mapper.Map(updateReservationDto, reservation);
+        var updatedReservation = await reservationService.UpdateReservationAsync(reservation);
 
-        return Ok(updatedReservation.MapTo<ReservationDto>());
+        return Ok(mapper.Map<ReservationDto>(updatedReservation));
     }
 
     [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteReservation(Guid id)
     {
-        var reservation = await _reservationService.GetReservationByIdAsync(id);
+        var reservation = await reservationService.GetReservationByIdAsync(id);
         if (reservation == null) return NotFound();
 
-        await _reservationService.DeleteReservationAsync(id);
+        await reservationService.DeleteReservationAsync(id);
         return NoContent();
     }
 }

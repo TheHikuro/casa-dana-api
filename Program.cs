@@ -10,19 +10,12 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabase();
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<TokenService>();
-builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
-builder.Services.AddScoped<ICalendarRepository, CalendarRepository>();
-builder.Services.AddScoped<ICalendarService, CalendarService>();
-
+builder.Services.AddApplicationServices();
 builder.Services.AddJwtAuthentication();
 builder.Services.AddSwaggerWithAuth();
 
 builder.Services.AddControllers();
+builder.Services.AddMappings();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
