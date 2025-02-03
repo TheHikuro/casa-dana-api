@@ -35,12 +35,12 @@ namespace CasaDanaAPI.Controllers
             return Ok(new { Token = token });
         }
         
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         [Authorize]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
+            if (user is null)
             {
                 return NotFound();
             }

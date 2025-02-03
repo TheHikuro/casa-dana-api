@@ -1,7 +1,9 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using CasaDanaAPI.Models.Calendar;
 using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Models.Users;
+using Calendar = CasaDanaAPI.Models.Calendar.Calendar;
 
 namespace CasaDanaAPI.Data
 {

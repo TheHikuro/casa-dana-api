@@ -3,6 +3,7 @@ using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CasaDanaAPI.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CasaDanaAPI.Controllers;
 
@@ -24,7 +25,7 @@ public class ReservationsController : ControllerBase
         return Ok(reservations.Select(r => r.MapTo<ReservationDto>()));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<ReservationDto>> GetReservation(Guid id)
     {
         var reservation = await _reservationService.GetReservationByIdAsync(id);
@@ -36,7 +37,7 @@ public class ReservationsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ReservationDto>> CreateReservation([FromBody] ReservationDto createReservationDto)
     {
-        if (createReservationDto == null) return BadRequest();
+        if (createReservationDto is null) return BadRequest();
 
         var reservation = createReservationDto.MapTo<Reservation>();
 
@@ -45,7 +46,8 @@ public class ReservationsController : ControllerBase
         return CreatedAtAction(nameof(GetReservation), new { id = createdReservation.Id }, createdReservation.MapTo<ReservationDto>());
     }
 
-    [HttpPut("{id}")]
+    [Authorize]
+    [HttpPut("{id:guid}")]
     public async Task<ActionResult<ReservationDto>> UpdateReservation(Guid id, ReservationDto updateReservationDto)
     {
         var reservation = await _reservationService.GetReservationByIdAsync(id);
@@ -57,7 +59,8 @@ public class ReservationsController : ControllerBase
         return Ok(updatedReservation.MapTo<ReservationDto>());
     }
 
-    [HttpDelete("{id}")]
+    [Authorize]
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteReservation(Guid id)
     {
         var reservation = await _reservationService.GetReservationByIdAsync(id);

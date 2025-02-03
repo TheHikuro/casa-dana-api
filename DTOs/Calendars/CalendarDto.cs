@@ -1,18 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace CasaDanaAPI.Models.Calendar
+namespace CasaDanaAPI.DTOs.Calendars
 {
-    public class Calendar
+    public class CalendarDto
     {
-        [Key]
         public Guid Id { get; set; }
-
-        [Required]
         public DateTime StartDate { get; set; }
-
-        [Required]
         public DateTime EndDate { get; set; }
-
         public int Price { get; set; } = 88;
     }
 }

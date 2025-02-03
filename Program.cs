@@ -16,6 +16,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<ICalendarRepository, CalendarRepository>();
+builder.Services.AddScoped<ICalendarService, CalendarService>();
 
 builder.Services.AddJwtAuthentication();
 builder.Services.AddSwaggerWithAuth();
