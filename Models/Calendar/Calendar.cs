@@ -5,7 +5,7 @@ namespace CasaDanaAPI.Models.Calendar
     public class Calendar
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
 
         [Required]
         public required DateTime StartDate { get; set; } = DateTime.UtcNow;

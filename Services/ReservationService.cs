@@ -1,43 +1,32 @@
 using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Services.Interfaces;
-using CasaDanaAPI.Data;
-using Microsoft.EntityFrameworkCore;
+using CasaDanaAPI.Repositories.Interfaces;
 
 namespace CasaDanaAPI.Services;
 
-public class ReservationService(ApplicationDbContext context) : IReservationService
+public class ReservationService(IReservationRepository reservationRepository) : IReservationService
 {
-    public async Task<Reservation?> GetReservationByIdAsync(Guid id)
-    {
-        return await context.Reservations.FindAsync(id);
-    }
+    public async Task<Reservation?> GetReservationByIdAsync(Guid id) => await reservationRepository.GetByIdAsync(id);
 
-    public async Task<List<Reservation>> GetAllReservationsAsync()
-    {
-        return await context.Reservations.ToListAsync();
-    }
+    public async Task<List<Reservation>> GetAllReservationsAsync() => await reservationRepository.GetAllAsync();
+    
+    public async Task<Reservation> CreateReservationAsync(Reservation reservationModel) => await reservationRepository.AddAsync(reservationModel);
 
-    public async Task<Reservation> CreateReservationAsync(Reservation reservation)
+    public async Task<Reservation?> UpdateReservationAsync(Guid id, Reservation reservation)
     {
-        context.Reservations.Add(reservation);
-        await context.SaveChangesAsync();
-        return reservation;
-    }
-
-    public async Task<Reservation> UpdateReservationAsync(Reservation reservation)
-    {
-        context.Reservations.Update(reservation);
-        await context.SaveChangesAsync();
-        return reservation;
+        var existingReservation = await reservationRepository.GetByIdAsync(id);
+        if (existingReservation is null) return null;
+        
+        return await reservationRepository.UpdateAsync(id, reservation);
     }
 
     public async Task<bool> DeleteReservationAsync(Guid id)
     {
-        var reservation = await context.Reservations.FindAsync(id);
-        if (reservation == null) return false;
+        var existingReservation = await reservationRepository.GetByIdAsync(id);
+        if (existingReservation is null) return false;
 
-        context.Reservations.Remove(reservation);
-        await context.SaveChangesAsync();
+        await reservationRepository.DeleteAsync(id);
+        
         return true;
     }
 }

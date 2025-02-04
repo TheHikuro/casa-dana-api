@@ -5,35 +5,19 @@ using CasaDanaAPI.Repositories.Interfaces;
 
 namespace CasaDanaAPI.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(ApplicationDbContext context) : IUserRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public UserRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<User?> GetByIdAsync(Guid id)
-        {
-            return await _context.Users.FindAsync(id);
-        }
-
-        public async Task<List<User>> GetAllAsync()
-        {
-            return await _context.Users.ToListAsync();
-        }
-
+        public async Task<User?> GetByIdAsync(Guid id) => await context.Users.FindAsync(id);
+        
+        public async Task<List<User>> GetAllAsync() => await context.Users.ToListAsync();
+        
         public async Task<User> AddAsync(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
             return user;
         }
         
-        public async Task<User?> GetUserByEmailAsync(string email)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        }
+        public async Task<User?> GetUserByEmailAsync(string email) => await context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 }

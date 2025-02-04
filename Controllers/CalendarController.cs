@@ -4,64 +4,61 @@ using CasaDanaAPI.Models.Calendar;
 using CasaDanaAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CasaDanaAPI.Controllers
+namespace CasaDanaAPI.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class CalendarController(ICalendarService calendarService, IMapper mapper) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class CalendarController(ICalendarService calendarService, IMapper mapper) : ControllerBase
+    [HttpGet("price")]
+    public async Task<ActionResult<int>> GetPriceForDate([FromQuery] DateTime date)
     {
-        [HttpGet("price")]
-        public async Task<ActionResult> GetPriceForDate([FromQuery] DateTime date)
-        {
-            if (date == default) return BadRequest("Invalid date.");
+        if (date == default) return BadRequest("Invalid date.");
 
-            var price = await calendarService.GetPriceForDateAsync(date);
-            return Ok(price);
-        }
+        var price = await calendarService.GetPriceForDateAsync(date);
+        return Ok(price);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult> GetAll()
-        {
-            var entries = await calendarService.GetAllCalendarEntriesAsync();
-            return Ok(entries.Select(e => mapper.Map<CalendarDto>(e)));
-        }
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CalendarDto>>> GetAll()
+    {
+        var entries = await calendarService.GetAllCalendarEntriesAsync();
+        return Ok(entries.Select(mapper.Map<CalendarDto>));
+    }
 
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult> GetById([FromRoute] Guid id)
-        {
-            var entry = await calendarService.GetCalendarEntryByIdAsync(id);
-            if (entry is null) return NotFound();
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<CalendarDto>> GetById(Guid id)
+    {
+        var entry = await calendarService.GetCalendarEntryByIdAsync(id);
+        return entry is null ? NotFound() : Ok(mapper.Map<CalendarDto>(entry));
+    }
 
-            return Ok(mapper.Map<CalendarDto>(entry));
-        }
+    [HttpPost]
+    public async Task<ActionResult<CalendarDto>> Create([FromBody] CalendarDto body)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CalendarDto body)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+        var entry = mapper.Map<Calendar>(body);
+        var created = await calendarService.CreateCalendarEntryAsync(entry);
 
-            var calendar = mapper.Map<Calendar>(body);
-            var created = await calendarService.CreateCalendarEntryAsync(calendar);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, mapper.Map<CalendarDto>(created));
+    }
 
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, mapper.Map<CalendarDto>(created));
-        }
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> Update(Guid id, [FromBody] CalendarDto body)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        [HttpPut("{id:guid}")]
-        public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] CalendarDto body)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+        var entry = mapper.Map<Calendar>(body);
+        var updated = await calendarService.UpdateCalendarEntryAsync(id, entry);
 
-            var calendar = mapper.Map<Calendar>(body);
-            await calendarService.UpdateCalendarEntryAsync(id, calendar);
+        return updated is null ? NotFound() : Ok(mapper.Map<CalendarDto>(updated));    
+    }
 
-            return NoContent();
-        }
-
-        [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> Delete([FromRoute] Guid id)
-        {
-            await calendarService.DeleteCalendarEntryAsync(id);
-            return NoContent();
-        }
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id)
+    {
+        await calendarService.DeleteCalendarEntryAsync(id);
+        return NoContent();
     }
 }
