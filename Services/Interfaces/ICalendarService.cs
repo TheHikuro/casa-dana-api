@@ -9,5 +9,5 @@ public interface ICalendarService
     Task<Calendar> CreateCalendarEntryAsync(Calendar entry);
     Task<Calendar?> UpdateCalendarEntryAsync(Guid id, Calendar entry);
     Task DeleteCalendarEntryAsync(Guid id);
-    Task<List<(DateTime Date, int Price)>> GetPriceForDateRangeAsync(DateTime start, DateTime end);
+    Task<List<(DateTime Date, int Price)>> GetPriceForDateRangeAsync(string start, string end);
 }

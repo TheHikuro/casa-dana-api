@@ -1,7 +1,7 @@
-using AutoMapper;
-using CasaDanaAPI.Models.Calendar;
+using System.Globalization;
 using CasaDanaAPI.Repositories.Interfaces;
 using CasaDanaAPI.Services.Interfaces;
+using Calendar = CasaDanaAPI.Models.Calendar.Calendar;
 
 namespace CasaDanaAPI.Services;
 
@@ -9,36 +9,35 @@ public class CalendarService(ICalendarRepository calendarRepository) : ICalendar
 {
     private const int DefaultPrice = 88;
     
-    private static DateTime NormalizeToUtc(DateTime date)
+    private static DateTime ConvertToDdMmYyyy(string dateStr)
     {
-        return date.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(date, DateTimeKind.Utc) : date.ToUniversalTime();
+        if (!DateTime.TryParseExact(dateStr, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+            throw new ArgumentException("Invalid date format. Use DD/MM/YYYY.");
+
+        return DateTime.SpecifyKind(date, DateTimeKind.Utc);
     }
 
-    public async Task<List<(DateTime Date, int Price)>> GetPriceForDateRangeAsync(DateTime start, DateTime end)
+    public async Task<List<(DateTime Date, int Price)>> GetPriceForDateRangeAsync(string start, string end)
     {
-        if (start > end) throw new ArgumentException("Start date must be before end date.");
+        var parsedStart = ConvertToDdMmYyyy(start);
+        var parsedEnd = ConvertToDdMmYyyy(end);
 
-        start = NormalizeToUtc(start);
-        end = NormalizeToUtc(end);
+        if (parsedStart >= parsedEnd) throw new ArgumentException("Start date must be before end date.");
 
-        var overlappingEntries = await calendarRepository.GetOverlappingRangesAsync(start, end);
+        var overlappingEntries = await calendarRepository.GetOverlappingRangesAsync(parsedStart, parsedEnd);
         var priceList = new List<(DateTime Date, int Price)>();
 
-        for (var date = start; date <= end; date = date.AddDays(1))
+        for (var date = parsedStart; date < parsedEnd; date = date.AddDays(1))
         {
             var price = overlappingEntries
                 .FirstOrDefault(entry => entry.StartDate <= date && entry.EndDate >= date)?.Price ?? DefaultPrice;
 
-            if (price != DefaultPrice) 
-            {
-                priceList.Add((date, price));
-            }
+            priceList.Add((date, price));
         }
 
         return priceList;
     }
-
-
+    
     public async Task<IEnumerable<Calendar>> GetAllCalendarEntriesAsync() => await calendarRepository.GetAllAsync();
 
     public async Task<Calendar?> GetCalendarEntryByIdAsync(Guid id) => await calendarRepository.GetByIdAsync(id);
