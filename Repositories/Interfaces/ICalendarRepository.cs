@@ -9,7 +9,6 @@ namespace CasaDanaAPI.Repositories.Interfaces
         Task<IEnumerable<Calendar>> GetAllAsync();
         Task UpdateAsync(Calendar entry);
         Task DeleteAsync(Guid id);
-
-        Task<IEnumerable<Calendar>> GetOverlappingRangesAsync(DateTime date);
+        Task<List<Calendar>> GetOverlappingRangesAsync(DateTime start, DateTime end);
     }
 }

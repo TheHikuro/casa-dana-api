@@ -11,12 +11,15 @@ namespace CasaDanaAPI.Controllers;
 public class CalendarController(ICalendarService calendarService, IMapper mapper) : ControllerBase
 {
     [HttpGet("price")]
-    public async Task<ActionResult<int>> GetPriceForDate([FromQuery] DateTime date)
+    public async Task<ActionResult<List<object>>> GetPriceForDateRange([FromQuery] DateTime start, [FromQuery] DateTime end)
     {
-        if (date == default) return BadRequest("Invalid date.");
+        if (start == default || end == default) return BadRequest("Start and End dates are required.");
+        if (start > end) return BadRequest("Start date must be before end date.");
 
-        var price = await calendarService.GetPriceForDateAsync(date);
-        return Ok(price);
+        var prices = await calendarService.GetPriceForDateRangeAsync(start, end);
+
+        var response = prices.Select(p => new { Date = p.Date, Price = p.Price }).ToList();
+        return Ok(response);
     }
 
     [HttpGet]

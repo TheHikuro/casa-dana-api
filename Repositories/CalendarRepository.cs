@@ -34,11 +34,12 @@ namespace CasaDanaAPI.Repositories
                 await context.SaveChangesAsync();
             }
         }
-
-        public async Task<IEnumerable<Calendar>> GetOverlappingRangesAsync(DateTime date)
+        
+        public async Task<List<Calendar>> GetOverlappingRangesAsync(DateTime start, DateTime end)
         {
             return await context.Calendars
-                .Where(c => c.StartDate <= date && c.EndDate >= date)
+                .Where(c => c.StartDate <= end && c.EndDate >= start) 
+                .OrderBy(c => c.StartDate) 
                 .ToListAsync();
         }
     }
