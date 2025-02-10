@@ -1,12 +1,11 @@
-using CasaDanaAPI.Data;
-using CasaDanaAPI.Models;
+using CasaDanaAPI.Infrastructure;
 using CasaDanaAPI.Models.Calendar;
 using CasaDanaAPI.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CasaDanaAPI.Repositories
 {
-    public class CalendarRepository(ApplicationDbContext context) : ICalendarRepository
+    public class CalendarRepository(DataContext context) : ICalendarRepository
     {
         public async Task<Calendar?> GetByIdAsync(Guid id) => await context.Calendars.FindAsync(id);
 

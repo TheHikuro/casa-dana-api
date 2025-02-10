@@ -1,6 +1,8 @@
+using CasaDanaAPI.Infrastructure;
+using CasaDanaAPI.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
-using CasaDanaAPI.Data;
 using DotNetEnv;
+using Microsoft.AspNetCore.Identity;
 
 namespace CasaDanaAPI.Extensions
 {
@@ -15,8 +17,12 @@ namespace CasaDanaAPI.Extensions
                 ? BuildConnectionStringFromUrl(databaseUrl)
                 : BuildConnectionStringFromEnv();
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<DataContext>(options =>
                 options.UseNpgsql(connectionString));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<DataContext>()
+                .AddDefaultTokenProviders();
 
             return services;
         }

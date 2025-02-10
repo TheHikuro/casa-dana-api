@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace CasaDanaAPI.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class ReservationsController(IReservationService reservationService, IMapper mapper) : ControllerBase
 {
     [HttpGet]

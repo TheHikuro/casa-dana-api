@@ -1,6 +1,6 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using DotNetEnv;
 
 namespace CasaDanaAPI.Extensions
@@ -11,11 +11,9 @@ namespace CasaDanaAPI.Extensions
         {
             Env.Load();
 
-            var secretKey = Env.GetString("JWT_SECRET_KEY") ?? throw new Exception("JWT_SECRET_KEY is missing.");
-            var issuer = Env.GetString("JWT_ISSUER");
-            var audience = Env.GetString("JWT_AUDIENCE");
-
-            var key = Encoding.ASCII.GetBytes(secretKey);
+            var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "fallbackKey";
+            var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "fallbackIssuer";
+            var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "fallbackAudience";
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -26,17 +24,12 @@ namespace CasaDanaAPI.Extensions
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
+
                         ValidIssuer = issuer,
                         ValidAudience = audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey))
                     };
                 });
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("RequireAdmin", policy =>
-                    policy.RequireRole("Admin"));
-            });
 
             return services;
         }

@@ -1,8 +1,0 @@
-{
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "deploy": {
-    "command": "dotnet CasaDanaAPI.dll"
-  }
-}

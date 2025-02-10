@@ -1,11 +1,11 @@
-using CasaDanaAPI.Data;
+using CasaDanaAPI.Infrastructure;
 using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CasaDanaAPI.Repositories;
 
-public class ReservationRepository(ApplicationDbContext context) : IReservationRepository
+public class ReservationRepository(DataContext context) : IReservationRepository
 {
     public async Task<Reservation?> GetByIdAsync(Guid id) => await context.Reservations.FindAsync(id);
     

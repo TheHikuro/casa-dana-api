@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CasaDanaAPI.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class CalendarController(ICalendarService calendarService, IMapper mapper) : ControllerBase
 {
     [HttpGet("price")]

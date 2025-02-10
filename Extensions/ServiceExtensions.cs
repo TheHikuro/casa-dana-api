@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using CasaDanaAPI.Services;
 using CasaDanaAPI.Services.Interfaces;
 using CasaDanaAPI.Repositories;
@@ -10,11 +9,9 @@ namespace CasaDanaAPI.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<ICalendarRepository, CalendarRepository>();
             
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<TokenService>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<ICalendarService, CalendarService>();
