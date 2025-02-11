@@ -43,6 +43,6 @@ namespace CasaDanaAPI.Models.Reservations
         public string? Description { get; init; } = string.Empty; 
         
         [Column(TypeName = "varchar(20)")]
-        public ReservationStatus Status { get; init; } = ReservationStatus.Pending; 
+        public ReservationStatus Status { get; set; } = ReservationStatus.Pending; 
     }
 }

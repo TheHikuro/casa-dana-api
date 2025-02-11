@@ -19,18 +19,13 @@ public class ReservationRepository(DataContext context) : IReservationRepository
         return reservation;
     }
 
-    public async Task<Reservation?> UpdateAsync(Guid id, ReservationStatus reservation)
+    public async Task<Reservation?> UpdateAsync(Guid id, ReservationStatus status)
     {
         var existingReservation = await context.Reservations.FindAsync(id);
         if (existingReservation == null) return null;
-        
-        context.Reservations.Update(
-            new Reservation
-            {
-                Id = id,
-                Status = reservation
-            }
-        );
+
+        existingReservation.Status = status;
+
         await context.SaveChangesAsync();
         return existingReservation;
     }
