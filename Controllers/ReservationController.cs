@@ -5,19 +5,23 @@ using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace CasaDanaAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ReservationsController(IReservationService reservationService, IMapper mapper, IEmailService emailService) : ControllerBase
+public class ReservationsController(IReservationService reservationService, IMapper mapper, IEmailService emailService, IConfiguration configuration) : ControllerBase
 {
+    private readonly string _templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Infrastructure", "Configuration", "Templates");
+    private readonly string _senderEmail = configuration["EmailSettings:SenderEmail"]!; 
+
     [HttpGet]
     [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
     public async Task<ActionResult<IEnumerable<ReservationDto>>> GetReservations()
     {
         var reservations = await reservationService.GetAllReservationsAsync();
-        return Ok(reservations.Select(mapper.Map<ReservationDto>));    
+        return Ok(reservations.Select(mapper.Map<ReservationDto>));
     }
 
     [HttpGet("{id:guid}")]
@@ -36,13 +40,31 @@ public class ReservationsController(IReservationService reservationService, IMap
     {
         var reservation = mapper.Map<Reservation>(body);
         var createdReservation = await reservationService.CreateReservationAsync(reservation);
+        
+        string guestEmailBody = LoadTemplate("GuestEmail.html")
+            .Replace("{{FirstName}}", body.FirstName)
+            .Replace("{{LastName}}", body.LastName)
+            .Replace("{{StartDate}}", body.Start.ToString("dd/MM/yyyy"))
+            .Replace("{{EndDate}}", body.End.ToString("dd/MM/yyyy"));
 
+        string hostEmailBody = LoadTemplate("NewBookingNotification.html")
+            .Replace("{{FirstName}}", body.FirstName)
+            .Replace("{{LastName}}", body.LastName)
+            .Replace("{{Email}}", body.Email)
+            .Replace("{{StartDate}}", body.Start.ToString("dd/MM/yyyy"))
+            .Replace("{{EndDate}}", body.End.ToString("dd/MM/yyyy"));
+        
         await emailService.SendEmailAsync(
             to: body.Email,
-            subject: "Reservation Confirmation",
-            htmlMessage:
-                $"<p>Bonjour {body.FirstName} {body.LastName}, Merci pour votre reservation ! Nous reviendrons rapidement vers vous !</p>"
-            );
+            subject: "Votre demande de réservation",
+            htmlMessage: guestEmailBody
+        );
+        
+        await emailService.SendEmailAsync(
+            to: _senderEmail,
+            subject: "Nouvelle réservation reçue",
+            htmlMessage: hostEmailBody
+        );
 
         return CreatedAtAction(nameof(GetReservation), new { id = createdReservation.Id }, mapper.Map<ReservationDto>(createdReservation));
     }
@@ -54,8 +76,23 @@ public class ReservationsController(IReservationService reservationService, IMap
     {
         var reservation = await reservationService.GetReservationByIdAsync(id);
         if (reservation == null) return NotFound();
-        
+
         var updatedReservation = await reservationService.UpdateReservationAsync(id, status);
+
+        if (status == ReservationStatus.Confirmed) 
+        {
+            var confirmationEmailBody = LoadTemplate("ReservationConfirmed.html")
+                .Replace("{{FirstName}}", reservation.FirstName)
+                .Replace("{{LastName}}", reservation.LastName)
+                .Replace("{{StartDate}}", reservation.Start.ToString("dd/MM/yyyy"))
+                .Replace("{{EndDate}}", reservation.End.ToString("dd/MM/yyyy"));
+
+            await emailService.SendEmailAsync(
+                to: reservation.Email,
+                subject: "Confirmation de votre réservation",
+                htmlMessage: confirmationEmailBody
+            );
+        }
 
         return Ok(mapper.Map<ReservationDto>(updatedReservation));
     }
@@ -71,4 +108,18 @@ public class ReservationsController(IReservationService reservationService, IMap
         await reservationService.DeleteReservationAsync(id);
         return NoContent();
     }
+    
+    private string LoadTemplate(string fileName)
+    {
+        var filePath = Path.Combine(_templatePath, fileName);
+    
+        if (!System.IO.File.Exists(filePath))
+        {
+            Console.WriteLine($"⚠️ Template introuvable : {filePath}");
+            return $"<p>Template {fileName} introuvable</p>";
+        }
+
+        return System.IO.File.ReadAllText(filePath);
+    }
+
 }
