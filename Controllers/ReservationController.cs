@@ -1,6 +1,6 @@
 using AutoMapper;
 using CasaDanaAPI.DTOs.Reservations;
-using CasaDanaAPI.Extensions;
+using CasaDanaAPI.Enums;
 using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +10,7 @@ namespace CasaDanaAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ReservationsController(IReservationService reservationService, IMapper mapper) : ControllerBase
+public class ReservationsController(IReservationService reservationService, IMapper mapper, IEmailService emailService) : ControllerBase
 {
     [HttpGet]
     [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
@@ -37,19 +37,25 @@ public class ReservationsController(IReservationService reservationService, IMap
         var reservation = mapper.Map<Reservation>(body);
         var createdReservation = await reservationService.CreateReservationAsync(reservation);
 
+        await emailService.SendEmailAsync(
+            to: body.Email,
+            subject: "Reservation Confirmation",
+            htmlMessage:
+                $"<p>Bonjour {body.FirstName} {body.LastName}, Merci pour votre reservation ! Nous reviendrons rapidement vers vous !</p>"
+            );
+
         return CreatedAtAction(nameof(GetReservation), new { id = createdReservation.Id }, mapper.Map<ReservationDto>(createdReservation));
     }
 
     [Authorize]
-    [HttpPut("{id:guid}")]
+    [HttpPatch("{id:guid}")]
     [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Update))]
-    public async Task<ActionResult<ReservationDto>> UpdateReservation(Guid id, ReservationDto updateReservationDto)
+    public async Task<ActionResult<ReservationDto>> UpdateReservation(Guid id, ReservationStatus status)
     {
         var reservation = await reservationService.GetReservationByIdAsync(id);
         if (reservation == null) return NotFound();
-
-        mapper.Map(updateReservationDto, reservation);
-        var updatedReservation = await reservationService.UpdateReservationAsync(id, reservation);
+        
+        var updatedReservation = await reservationService.UpdateReservationAsync(id, status);
 
         return Ok(mapper.Map<ReservationDto>(updatedReservation));
     }

@@ -1,7 +1,10 @@
 using CasaDanaAPI.Extensions;
+using CasaDanaAPI.Infrastructure.Configuration;
 using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 builder.Services.AddDatabase();
 builder.Services.AddApplicationServices();

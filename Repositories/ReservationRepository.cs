@@ -1,3 +1,4 @@
+using CasaDanaAPI.Enums;
 using CasaDanaAPI.Infrastructure;
 using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Repositories.Interfaces;
@@ -18,14 +19,20 @@ public class ReservationRepository(DataContext context) : IReservationRepository
         return reservation;
     }
 
-    public async Task<Reservation?> UpdateAsync(Guid id, Reservation reservation)
+    public async Task<Reservation?> UpdateAsync(Guid id, ReservationStatus reservation)
     {
         var existingReservation = await context.Reservations.FindAsync(id);
         if (existingReservation == null) return null;
         
-        context.Reservations.Update(reservation);
+        context.Reservations.Update(
+            new Reservation
+            {
+                Id = id,
+                Status = reservation
+            }
+        );
         await context.SaveChangesAsync();
-        return reservation;
+        return existingReservation;
     }
 
     public async Task<Reservation?> DeleteAsync(Guid id)

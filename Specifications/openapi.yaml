@@ -604,7 +604,7 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "tags": [
           "Reservations"
         ],
@@ -617,39 +617,19 @@
               "type": "string",
               "format": "uuid"
             }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/ReservationDto"
-                  }
-                ]
-              }
-            },
-            "text/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/ReservationDto"
-                  }
-                ]
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/ReservationDto"
-                  }
-                ]
-              }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ReservationStatus"
+                }
+              ]
             }
           }
-        },
+        ],
         "responses": {
           "204": {
             "description": "No Content"

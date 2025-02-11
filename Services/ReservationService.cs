@@ -1,3 +1,4 @@
+using CasaDanaAPI.Enums;
 using CasaDanaAPI.Models.Reservations;
 using CasaDanaAPI.Services.Interfaces;
 using CasaDanaAPI.Repositories.Interfaces;
@@ -12,12 +13,12 @@ public class ReservationService(IReservationRepository reservationRepository) : 
     
     public async Task<Reservation> CreateReservationAsync(Reservation reservationModel) => await reservationRepository.AddAsync(reservationModel);
 
-    public async Task<Reservation?> UpdateReservationAsync(Guid id, Reservation reservation)
+    public async Task<Reservation?> UpdateReservationAsync(Guid id, ReservationStatus status)
     {
         var existingReservation = await reservationRepository.GetByIdAsync(id);
         if (existingReservation is null) return null;
         
-        return await reservationRepository.UpdateAsync(id, reservation);
+        return await reservationRepository.UpdateAsync(id, status);
     }
 
     public async Task<bool> DeleteReservationAsync(Guid id)

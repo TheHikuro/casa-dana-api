@@ -15,6 +15,7 @@ namespace CasaDanaAPI.Extensions
             services.AddScoped<TokenService>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<ICalendarService, CalendarService>();
+            services.AddScoped<IEmailService, MailService>();
 
             return services;
         }
