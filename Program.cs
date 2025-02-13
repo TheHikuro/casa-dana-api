@@ -14,11 +14,13 @@ builder.Services.AddControllers();
 builder.Services.AddMappings();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddJwtAuthentication();
+builder.Services.AddCustomCors();
 
 var app = builder.Build();
 app.MigrateDatabase();
 
 app.UseSwaggerWithUi(Env.GetString("ASPNETCORE_ENVIRONMENT"));
+app.UseCustomCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
