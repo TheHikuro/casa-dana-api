@@ -14,6 +14,6 @@ namespace CasaDanaAPI.Models.Calendar
         public required DateTime EndDate { get; set; } = DateTime.UtcNow.AddDays(1);
 
         [Required]
-        public required int Price { get; set; } = 88;
+        public required int Price { get; set; } = 90;
     }
 }
