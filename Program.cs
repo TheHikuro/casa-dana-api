@@ -19,6 +19,12 @@ builder.Services.AddCustomCors();
 var app = builder.Build();
 app.MigrateDatabase();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedUsers.CreateAdminUser(services, builder.Configuration);
+}
+
 app.UseSwaggerWithUi(Env.GetString("ASPNETCORE_ENVIRONMENT"));
 app.UseCustomCors();
 app.UseAuthentication();

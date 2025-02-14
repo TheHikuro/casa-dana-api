@@ -11,7 +11,7 @@ namespace CasaDanaAPI.Extensions
         {
             services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<ICalendarRepository, CalendarRepository>();
-            
+
             services.AddScoped<TokenService>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<ICalendarService, CalendarService>();
