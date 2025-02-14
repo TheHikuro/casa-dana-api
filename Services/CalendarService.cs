@@ -7,7 +7,7 @@ namespace CasaDanaAPI.Services;
 
 public class CalendarService(ICalendarRepository calendarRepository) : ICalendarService
 {
-    private const int DefaultPrice = 88;
+    private const int DefaultPrice = 90;
     
     private static DateTime ConvertToDdMmYyyy(string dateStr)
     {
