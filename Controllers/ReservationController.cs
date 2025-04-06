@@ -41,11 +41,15 @@ public class ReservationsController(IReservationService reservationService, IMap
         var reservation = mapper.Map<Reservation>(body);
         var createdReservation = await reservationService.CreateReservationAsync(reservation);
         
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris");
+        var localStart = TimeZoneInfo.ConvertTimeFromUtc(body.Start, timeZone);
+        var localEnd = TimeZoneInfo.ConvertTimeFromUtc(body.End, timeZone);
+
         string guestEmailBody = LoadTemplate("GuestEmail.html")
             .Replace("{{FirstName}}", body.FirstName)
             .Replace("{{LastName}}", body.LastName)
-            .Replace("{{StartDate}}", body.Start.ToString("dd/MM/yyyy"))
-            .Replace("{{EndDate}}", body.End.ToString("dd/MM/yyyy"));
+            .Replace("{{StartDate}}", localStart.ToString("dd/MM/yyyy"))
+            .Replace("{{EndDate}}", localEnd.ToString("dd/MM/yyyy"));
 
         string hostEmailBody = LoadTemplate("NewBookingNotification.html")
             .Replace("{{FirstName}}", body.FirstName)
