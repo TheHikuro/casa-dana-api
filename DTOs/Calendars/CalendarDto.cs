@@ -13,6 +13,6 @@ namespace CasaDanaAPI.DTOs.Calendars
         public required DateTime EndDate { get; set; }
          
         [Required(ErrorMessage = "Un prix est requis.")]
-        public required int Price { get; set; } = 90;
+        public required int Price { get; set; } = 95;
     }
 }
